@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import axios from 'axios'
+import React from 'react';
+import { render } from 'react-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+import Dashboard from './Dashboard';
 
 function App() {
-  const [getMessage, setGetMessage] = useState({})
-
-  useEffect(()=>{
-    axios.get('http://localhost:5000/time').then(response => {
-      console.log("SUCCESS", response)
-      setGetMessage(response)
-    }).catch(error => {
-      console.log(error)
-    })
-
-  }, [])
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>The current time is {getMessage.data.time}.</p>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+    return (
+      <Dashboard></Dashboard>
+    );
+  }
+  
+  export default App;
