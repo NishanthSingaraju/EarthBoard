@@ -8,6 +8,8 @@ import  GoogleLoginProvider from './GoogleLoginProvider.js'
 import GoogleLoginPane from "./LoginPane.js"
 import MapCard from "./MapCard"
 import ButtonAppBar from "./NavBar.js"
+import EarthEngineMap from "./Map.js"
+import axios from 'axios'
 
 
 const EE_CLIENT_ID = '783199902705-6380kgt5hno2jk7depl3pr4cmj0qdspt.apps.googleusercontent.com'
@@ -23,13 +25,14 @@ const INITIAL_VIEW_STATE = {
 class Dashboard extends Component{
   constructor(props){
     super(props);
-    this.state = {eeObjects: []};
+    this.state = {firstObject: null, eeObjects: []};
     this.loginProvider = new GoogleLoginProvider({
       scopes: ['https://www.googleapis.com/auth/earthengine'],
       clientId: EE_CLIENT_ID,
       onLoginChange: this._onLoginSuccess.bind(this)
     });
     this.addMap = this.addMap.bind(this)
+    this.addEarthMap = this.addEarthMap.bind(this)
   }
 
   async _onLoginSuccess(user, loginProvider) {
@@ -49,11 +52,10 @@ class Dashboard extends Component{
             palette: ['blue', 'purple', 'cyan', 'green', 'yellow', 'red'],
             animate: true
     }
-    this.addMap(descriptors)
+    this.addEarthMap(descriptors)
   }
 
-
-  addMap(descriptors){
+  addEarthMap(descriptors){
     const eeObject = ee
       .ImageCollection(descriptors["imageCollection"])
       .filterDate(descriptors["start"], descriptors["end"])
@@ -80,6 +82,24 @@ class Dashboard extends Component{
     })
   }
 
+  addMap(parameters){
+    const request = {
+                      ic: parameters["ic"], 
+                      reducer: parameters["reducer"], 
+                      start: parameters["start"], 
+                      end: parameters["end"], 
+                      vizParams: parameters["vizParams"]
+                    }
+    console.log(request)
+    axios.get("http://localhost:5000/api/map", request).then((res) => {
+      let map = [parameters["ic"] , <EarthEngineMap url= {res.data.url}></EarthEngineMap>]             
+      this.setState({
+        eeObjects: [...this.state.eeObjects, map]
+      })
+  })
+
+}
+
   render() {
     const eeObjects = this.state.eeObjects;  
 
@@ -93,7 +113,6 @@ class Dashboard extends Component{
             {eeObjects.map((deck, id) =>
               MapCard(id, deck)
             )}
-           
           </div>
         </div>
       );

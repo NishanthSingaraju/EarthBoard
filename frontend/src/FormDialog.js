@@ -4,40 +4,18 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Select from '@mui/material/Select';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
-const defaultValues = {
-    "NOAA/GFS0P25" : 
-        {   
-            imageCollection: "NOAA/GFS0P25",
-            start: "2018-12-22",
-            end: "2018-12-23",
-            bands: ["temperature_2m_above_ground"],
-            min_val: -40,
-            max: 35,
-            palette: ['blue', 'purple', 'cyan', 'green', 'yellow', 'red'],
-            animate: "true"
-        },
-    
-    "LANDSAT/LC08/C01/T1_TOA" : 
-        {   
-            imageCollection: "LANDSAT/LC08/C01/T1_TOA",
-            start: "2017-12-15",
-            end: "2017-12-31",
-            bands: ["B3"],
-            min_val: 0.0,
-            max: 25000.0,
-            palette: ['black', 'green'],
-            animate: "false"
-        }
-  };
 
 export default function FormDialog({addMap}) {
   const [open, setOpen] = React.useState(false);
-  const [imageCollection, setCollection] = React.useState("NOAA/GFS0P25");
+  const [collection, setCollection] = React.useState({"ic": "", "reducer": "", "start": "", "end":"", "vizParams": ""});
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -48,12 +26,16 @@ export default function FormDialog({addMap}) {
   };
 
   const handleSubmit = () => {
-      addMap(defaultValues[imageCollection])
+      addMap(collection)
+      // setCollection({"ic": "", "reducer": "", "start": "", "end":"", "vizParams": ""})
       handleClose()
   }
 
   const handleChange = (event) => {
-    setCollection(event.target.value);
+    let temp = collection
+    temp[event.target.name] = event.target.value
+    setCollection(temp);
+    console.log(collection)
   };
 
   return (
@@ -72,20 +54,23 @@ export default function FormDialog({addMap}) {
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Select Dataset</DialogTitle>
-        <DialogContent>
-            <Box component="form" sx={{display: 'flex', flexDirection: 'row' }}>
-                <Select
-                    native
-                    id="Image Collection"
-                    value={imageCollection}
-                    label="ImageCollection"
+        <Box sx={{display: "flex", minWidth: 500, flexDirection: "row", justifyContent: "space-evenly", padding: 1, alignItems: "center"}}>
+            <Box sx={{minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: "space-evenly", padding: 1}}>
+              <TextField name="ic" label="Image Collection" variant="outlined" onChange={handleChange}/>
+              <Select
+                    name={"reducer"}
+                    value={collection["reducer"]}
                     onChange={handleChange}
-                >
-                    <option value={"NOAA/GFS0P25"}>NOAA/GFS0P25</option>
-                    <option value={"LANDSAT/LC08/C01/T1_TOA"}>LANDSAT/LC08/C01/T1_TOA</option>
+                    >
+                    <MenuItem name= {"reducer"} value={"mean"}>mean</MenuItem>
+                    <MenuItem name= {"reducer"} value={"max"}>max</MenuItem>
+                    <MenuItem name= {"reducer"} value={"first"}>first</MenuItem>
                 </Select>
+                <TextField name="start" label="Start" variant="outlined" onChange={handleChange}/>
+                <TextField name="end" label="End" variant="outlined" onChange={handleChange}/>
+              </Box>
+              <TextField name="vizParams" variant="outlined" multiline rows={12} onChange={handleChange}/>
             </Box>
-        </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit}>Submit</Button>
         </DialogActions>
