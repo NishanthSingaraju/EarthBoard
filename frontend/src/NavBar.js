@@ -12,7 +12,7 @@ import FormDialog from './FormDialog'
 export default function ButtonAppBar({loginPane, handleClick}) {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{ background: '#13A053' }}>
+      <AppBar position="static" style={{ background: '#13A053'}}>
         <Toolbar>
           {loginPane}
           <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
