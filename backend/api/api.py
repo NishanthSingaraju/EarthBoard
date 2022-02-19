@@ -188,14 +188,16 @@ def poll_status():
   return Response(stream(dataValues["id"]), mimetype="text/event-stream")
 
 
-@app.route('/map')
+@app.route('/api/map', methods=["GET"])
 def render_map():
-  data = request.get_json()
+  data = request.data
+  print(data)
   dataValues = json.loads(data)
+  vizParams = json.loads(dataValues["vizParams"])
   try:
-    maps.get_ee_layer(dataValues["ic"], dataValues["reducer"],
+    url = maps.get_ee_layer(dataValues["ic"], dataValues["reducer"],
                       dataValues["start"], dataValues["end"],
-                      dataValues["visParams"])
+                      vizParams)
   except Exception as e:
     return {"MESSAGE": str(e)}
-  return {"MESSAGE": "SUCCESS"}
+  return {"url": url}

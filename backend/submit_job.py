@@ -2,10 +2,7 @@ import time
 import subprocess
 import re
 
-from googleapiclient import discovery
-from googleapiclient import errors
-
-from aiplatform import config
+from backend.aiplatform import config
 
 JOB_NAME = 'training_job_'
 TRAINER_PACKAGE_PATH = 'aiplatform'
