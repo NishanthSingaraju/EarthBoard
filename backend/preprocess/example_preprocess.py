@@ -2,6 +2,7 @@ import ee
 
 ee.Initialize()
 
+
 def cloud_mask(image):
   opticalBands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']
   thermalBands = ['B10', 'B11']

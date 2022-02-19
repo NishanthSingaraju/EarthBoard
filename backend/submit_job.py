@@ -10,7 +10,6 @@ from aiplatform import config
 JOB_NAME = 'training_job_'
 TRAINER_PACKAGE_PATH = 'aiplatform'
 MAIN_TRAINER_MODULE = 'aiplatform.task'
-REGION = 'us-central1'
 JOB_DIR = 'gs://' + config.BUCKET + '/' + config.FOLDER + '/trainer'
 SCALE = "basic-gpu"
 
@@ -20,8 +19,8 @@ def run_job():
   p = subprocess.run([
       "gcloud", "ai-platform", "jobs", "submit", "training", job, "--job-dir",
       JOB_DIR, "--package-path", TRAINER_PACKAGE_PATH, "--module-name",
-      MAIN_TRAINER_MODULE, "--region", REGION, "--project", config.PROJECT,
-      "--runtime-version",
+      MAIN_TRAINER_MODULE, "--region", config.REGION, "--project",
+      config.PROJECT, "--runtime-version",
       str(2.3), "--python-version",
       str(3.7), "--scale-tier", SCALE
   ])

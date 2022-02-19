@@ -2,13 +2,16 @@ import tensorflow as tf
 
 PROJECT = "dataflow-test-313806"
 BUCKET = 'earthboard'
+REGION = 'us-central1'
 FOLDER = 'fcnn'
 TRAINING_BASE = 'training_patches'
 EVAL_BASE = 'eval_patches'
 
 # Specify inputs (Landsat bands) to the model and the response variable.
-BANDS = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', "B10", "B11"]
-RESPONSE = 'impervious'
+# BANDS = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', "B10", "B11"]
+# RESPONSE = 'impervious'
+BANDS = ["b1"]
+RESPONSE = "treecover2000"
 FEATURES = BANDS + [RESPONSE]
 
 # Specify the size and shape of patches expected by the model.
@@ -28,4 +31,4 @@ EVAL_SIZE = 8000
 BATCH_SIZE = 16
 EPOCHS = 10
 BUFFER_SIZE = 2000
-SCALE = 30
+SCALE = 90

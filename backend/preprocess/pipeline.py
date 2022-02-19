@@ -1,7 +1,11 @@
 import ee
 from backend.aiplatform import config
 
+ee.Initialize()
+
+
 class EarthBoardProcessJob:
+
   def __init__(self, image, output):
     self.image = image
     self.output = output
@@ -9,11 +13,18 @@ class EarthBoardProcessJob:
     self.evalPolys = None
 
   def set_geometries(self, trainPoly=None, evalPoly=None):
-    self.trainPolys = ee.FeatureCollection(
-        'projects/google/DemoTrainingGeometries')
+    features, eval_features = [], []
+    for poly in trainPoly:
+      features.append(ee.Geometry.Rectangle(poly))
+    for poly in evalPoly:
+      eval_features.append(ee.Geometry.Rectangle(poly))
+
+    self.trainPolys = ee.FeatureCollection(features)
+    self.evalPolys = ee.FeatureCollection(eval_features)
+
     self.evalPolys = ee.FeatureCollection('projects/google/DemoEvalGeometries')
 
-  def move_data(self, sample_size, shards):
+  def move_data(self, sample_size=2000, shards=200):
     image, output = ee.Image(self.image), ee.Image(self.output)
     featureStack = ee.Image.cat(
         [image.select(config.BANDS),
@@ -28,6 +39,7 @@ class EarthBoardProcessJob:
     trainingPolysList = trainingPolys.toList(trainingPolys.size())
     evalPolysList = evalPolys.toList(evalPolys.size())
 
+    tasks = []
     for g in range(trainingPolys.size().getInfo()):
       geomSample = ee.FeatureCollection([])
       for i in range(shards):
@@ -48,7 +60,7 @@ class EarthBoardProcessJob:
           fileFormat='TFRecord',
           selectors=config.BANDS + [config.RESPONSE])
       task.start()
-
+      tasks.append(task)
     # Export all the evaluation data.
     for g in range(evalPolys.size().getInfo()):
       geomSample = ee.FeatureCollection([])
@@ -70,7 +82,18 @@ class EarthBoardProcessJob:
           fileFormat='TFRecord',
           selectors=config.BANDS + [config.RESPONSE])
       task.start()
-    return "SUCCESS"
+      tasks.append(task)
+    return tasks
 
 
+def process(image, output):
+  job = EarthBoardProcessJob(image, output)
+  job.set_geometries()
+  tasks = job.move_data(2000, 200)
+  return tasks
 
+
+if __name__ == "__main__":
+  image, output = "UMD/hansen/global_forest_change_2020_v1_8", "WWF/HydroSHEDS/03DIR"
+  tasks = process(image, output)
+  print(tasks)
