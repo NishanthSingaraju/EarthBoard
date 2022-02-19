@@ -8,7 +8,6 @@ import  GoogleLoginProvider from './GoogleLoginProvider.js'
 import GoogleLoginPane from "./LoginPane.js"
 import MapCard from "./MapCard"
 import ButtonAppBar from "./NavBar.js"
-import GridLayout from "react-grid-layout";
 
 
 const EE_CLIENT_ID = '783199902705-6380kgt5hno2jk7depl3pr4cmj0qdspt.apps.googleusercontent.com'
@@ -21,7 +20,7 @@ const INITIAL_VIEW_STATE = {
   bearing: 0
 };
 
-class App extends Component{
+class Dashboard extends Component{
   constructor(props){
     super(props);
     this.state = {eeObjects: []};
@@ -48,7 +47,7 @@ class App extends Component{
             min: -40,
             max: 35,
             palette: ['blue', 'purple', 'cyan', 'green', 'yellow', 'red'],
-            animate: "true"
+            animate: true
     }
     this.addMap(descriptors)
   }
@@ -101,4 +100,4 @@ class App extends Component{
 }
 }
 
-export default App;
+export default Dashboard;
