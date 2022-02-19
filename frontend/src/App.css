@@ -42,11 +42,11 @@
 
 .mapping-container{
   position: relative;
-  width: 40vw;
-  height: 50vh;
-  flex-basis: auto
+  width: 45vw;
+  height: 45vh;
+  display: inline-block;
 }
 
 .card_map{
-  margin: 2%;
+  margin: 1%;
 }

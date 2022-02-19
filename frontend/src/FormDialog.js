@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 
 export default function FormDialog({addMap}) {
   const [open, setOpen] = React.useState(false);
-  const [collection, setCollection] = React.useState({"ic": "", "reducer": "", "start": "", "end":"", "vizParams": ""});
+  const [collection, setCollection] = React.useState({"ic": "", "reducer": "", "start": "", "end":"", "vizParams": "{}"});
 
 
   const handleClickOpen = () => {
@@ -27,7 +27,7 @@ export default function FormDialog({addMap}) {
 
   const handleSubmit = () => {
       addMap(collection)
-      // setCollection({"ic": "", "reducer": "", "start": "", "end":"", "vizParams": ""})
+      // setCollection({"ic": "", "reducer": "", "start": "", "end":"", "vizParams": "{}"})
       handleClose()
   }
 

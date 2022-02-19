@@ -3,7 +3,7 @@ import threading
 import json
 
 from flask import Flask, request, Response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 from backend.preprocess import pipeline
 from backend import submit_job
@@ -115,6 +115,9 @@ class JobHandler:
 
 jobHandler = JobHandler()
 
+@app.route('/test')
+def test():
+  return {"MESSAGE": "SUCCESS"}
 
 @app.route('/create')
 def create_job():
@@ -188,11 +191,9 @@ def poll_status():
   return Response(stream(dataValues["id"]), mimetype="text/event-stream")
 
 
-@app.route('/api/map', methods=["GET"])
+@app.route('/api/map', methods=["PUT"])
 def render_map():
-  data = request.data
-  print(data)
-  dataValues = json.loads(data)
+  dataValues = request.get_json()
   vizParams = json.loads(dataValues["vizParams"])
   try:
     url = maps.get_ee_layer(dataValues["ic"], dataValues["reducer"],

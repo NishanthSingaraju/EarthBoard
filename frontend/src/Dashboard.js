@@ -74,7 +74,9 @@ class Dashboard extends Component{
                     controller={true} 
                     views={new MapView({repeat: true})} 
                     initialViewState={INITIAL_VIEW_STATE} 
-                    layers={layer}> 
+                    layers={layer}
+                    style={{height: "45vh", width: "45vw"}}
+                    >
                   </DeckGL>]
     
     this.setState({
@@ -91,7 +93,7 @@ class Dashboard extends Component{
                       vizParams: parameters["vizParams"]
                     }
     console.log(request)
-    axios.get("http://localhost:5000/api/map", request).then((res) => {
+    axios.put("http://localhost:5000/api/map", request).then((res) => {
       let map = [parameters["ic"] , <EarthEngineMap url= {res.data.url}></EarthEngineMap>]             
       this.setState({
         eeObjects: [...this.state.eeObjects, map]
