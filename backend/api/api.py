@@ -115,14 +115,15 @@ class JobHandler:
 
 jobHandler = JobHandler()
 
-@app.route('/test')
+
+@app.route('/test', methods=["PUT"])
 def test():
   return {"MESSAGE": "SUCCESS"}
 
-@app.route('/create')
+
+@app.route('/create', methods=["PUT"])
 def create_job():
-  data = request.get_json()
-  dataValues = json.loads(data)
+  dataValues = request.get_json()
   try:
     jobHandler.add_job(dataValues["id"])
   except Exception as e:
@@ -130,7 +131,7 @@ def create_job():
   return {"MESSAGE": "SUCCESS"}
 
 
-@app.route('/process')
+@app.route('/process', methods=["PUT"])
 def process_data():
   data = request.get_json()
   dataValues = json.loads(data)
@@ -144,7 +145,7 @@ def process_data():
   return {"MESSAGE": "SUCCESS"}
 
 
-@app.route('/model')
+@app.route('/model', methods=["PUT"])
 def model():
   data = request.get_json()
   dataValues = json.loads(data)
@@ -156,7 +157,7 @@ def model():
   return {"MESSAGE": "SUCCESS"}
 
 
-@app.route('/inference')
+@app.route('/inference', methods=["PUT"])
 def inference():
   data = request.get_json()
   dataValues = json.loads(data)
@@ -167,7 +168,7 @@ def inference():
   return {"MESSAGE": "SUCCESS"}
 
 
-@app.route('/visualize')
+@app.route('/visualize', methods=["PUT"])
 def visualize_predictions():
   data = request.get_json()
   dataValues = json.loads(data)
@@ -178,7 +179,7 @@ def visualize_predictions():
   return {"MESSAGE": "SUCCESS"}
 
 
-@app.route('/poll')
+@app.route('/poll', methods=["PUT"])
 def poll_status():
   data = request.get_json()
   dataValues = json.loads(data)
@@ -197,8 +198,7 @@ def render_map():
   vizParams = json.loads(dataValues["vizParams"])
   try:
     url = maps.get_ee_layer(dataValues["ic"], dataValues["reducer"],
-                      dataValues["start"], dataValues["end"],
-                      vizParams)
+                            dataValues["start"], dataValues["end"], vizParams)
   except Exception as e:
     return {"MESSAGE": str(e)}
   return {"url": url}
