@@ -12,6 +12,29 @@ import axios from 'axios';
 
 function StartComponent(props) {
     const [images, setImages] = React.useState({"image": "", "output": ""});
+    const [trainPolygon, setPolygon] = React.useState([]);
+    const [evalPolygon, setEvalPolygon] = React.useState([]);
+
+    const handlePolygon = (e) => {
+        e.layers.eachLayer(a => {
+            if (a.options["color"] == "red"){
+                let tempPolygon = evalPolygon
+                let northEast = a._bounds._northEast
+                let southWest = a._bounds._southWest
+                tempPolygon.push([southWest["lat"], southWest["lng"], northEast["lat"], northEast["lng"]])
+                setEvalPolygon(tempPolygon)
+            }
+
+            else{
+                let tempPolygon = trainPolygon
+                let northEast = a._bounds._northEast
+                let southWest = a._bounds._southWest
+                tempPolygon.push([southWest["lat"], southWest["lng"], northEast["lat"], northEast["lng"]])
+                setPolygon(tempPolygon)
+            }
+
+        })
+    }
 
     const handleChange = (event) => {
         let temp = images
@@ -24,10 +47,12 @@ function StartComponent(props) {
             id: "testJob",
             image: images["image"],
             output: images["output"],
-            
+            trainPoly: trainPolygon,
+            evalPoly: evalPolygon,
           }
         axios.put("http://localhost:5000/process", request).then((res) => {   
             console.log(res);
+            props.setStep("DOWNLOADING")
       })
     }
 
@@ -57,13 +82,7 @@ function StartComponent(props) {
                 //and runs my save function on the layer, converted to GeoJSON 
                 //which is an organic function of leaflet layers.
 
-                onEdited={e => {
-                    e.layers.eachLayer(a => {
-                        console.log(a)
-                        console.log(a._bounds)
-                        console.log(a.color)
-                    });
-                }}
+                onEdited={handlePolygon}
 
                 edit={{ remove: true}}
                 draw={{
@@ -85,12 +104,6 @@ function StartComponent(props) {
                 //this is the necessary function. It goes through each layer
                 //and runs my save function on the layer, converted to GeoJSON 
                 //which is an organic function of leaflet layers.
-
-                onEdited={e => {
-                    e.layers.eachLayer(a => {
-                        console.log(a._bounds)
-                    });
-                }}
                 edit={{ remove: true }}
                 draw={{
                     marker: false,

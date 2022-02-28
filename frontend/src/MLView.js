@@ -2,12 +2,14 @@
 import React, {Component} from 'react';
 import axios from 'axios'
 import StartComponent from "./StartComponent"
+import DownloadComponent from "./Download"
 
 
 class MLView extends Component{
     constructor(props){
       super(props);
       this.state = {jobId: null, step:null};
+      this.setStep = this.setStep.bind(this)
     }
 
     async componentDidMount(){
@@ -22,6 +24,12 @@ class MLView extends Component{
         })
     }
 
+    setStep(step) {
+        this.setState({
+            "step": step
+        })
+    }
+
 
     render() {
     return(
@@ -29,9 +37,15 @@ class MLView extends Component{
         {(() => {
             if (this.state.step == "STARTED"){
             return (
-                <StartComponent></StartComponent>
+                <StartComponent setStep={this.setStep}></StartComponent>
             )
-            } else {
+        }
+            else if (this.state.step == "DOWNLOADING") {
+                return(
+               <DownloadComponent></DownloadComponent>
+                )
+            }
+            else {
             return (
                 <div>catch all</div>
             )

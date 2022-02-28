@@ -7,6 +7,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import FormDialog from './FormDialog'
+import { Link } from "react-router-dom";
+import PsychologyIcon from '@mui/icons-material/Psychology';
 
 
 export default function ButtonAppBar({loginPane, handleClick}) {
@@ -18,6 +20,7 @@ export default function ButtonAppBar({loginPane, handleClick}) {
           <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
             Earth Board
           </Typography>
+          <Link to="/ml"><IconButton sx={{color:"white"}}><PsychologyIcon></PsychologyIcon></IconButton></Link>
           <FormDialog addMap={handleClick}/>
         </Toolbar>
       </AppBar>
