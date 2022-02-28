@@ -22,8 +22,6 @@ class EarthBoardProcessJob:
     self.trainPolys = ee.FeatureCollection(features)
     self.evalPolys = ee.FeatureCollection(eval_features)
 
-    self.evalPolys = ee.FeatureCollection('projects/google/DemoEvalGeometries')
-
   def move_data(self, sample_size=2000, shards=200):
     image, output = ee.Image(self.image), ee.Image(self.output)
     featureStack = ee.Image.cat(

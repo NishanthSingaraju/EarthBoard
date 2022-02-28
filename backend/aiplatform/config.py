@@ -10,8 +10,8 @@ EVAL_BASE = 'eval_patches'
 # Specify inputs (Landsat bands) to the model and the response variable.
 # BANDS = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', "B10", "B11"]
 # RESPONSE = 'impervious'
-BANDS = ["b1"]
-RESPONSE = "treecover2000"
+BANDS = ["elevation"]
+RESPONSE = "b1"
 FEATURES = BANDS + [RESPONSE]
 
 # Specify the size and shape of patches expected by the model.

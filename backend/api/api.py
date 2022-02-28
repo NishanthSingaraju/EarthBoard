@@ -43,7 +43,7 @@ class JobHandler:
 
   def download_data(self, id, image, output, trainPoly, testPolys):
     if id not in self.jobs:
-      raise ValueError("Job does not exist")
+      raise ValueError(f"Job does not exist {id}")
     elif self.jobs[id]["status"] != "STARTED":
       raise ValueError("Download has already happened or currently running")
     else:
@@ -87,10 +87,11 @@ class JobHandler:
       raise ValueError("Job does not exist")
     if self.jobs[id]["status"] == "DOWNLOADING":
       for task in self.jobs[id]["tasks"]:
-        if task.status() == "FAILED":
+        print(task.status())
+        if task.status()["state"] == "FAILED":
           self.jobs[id]["status"] = "FAILED"
           return True
-        if task.status() != "COMPLETED":
+        if task.status()["state"] != "COMPLETED":
           return False
       self.jobs[id]["status"] = 'DOWNLOADED'
       return True
@@ -106,14 +107,15 @@ class JobHandler:
 
     def f():
       while not self.update_status(id):
-        yield self.jobs[id]["status"]
-        time.sleep(30)
+        time.sleep(10)
 
     self.jobs[id]["thread"] = ProgressThread(state=self.jobs[id]["status"], f=f)
     self.jobs[id]["thread"].start()
+    print("Created Thread")
 
 
 jobHandler = JobHandler()
+jobHandler.add_job("testJob")
 
 
 @app.route('/test', methods=["PUT"])
@@ -133,8 +135,7 @@ def create_job():
 
 @app.route('/process', methods=["PUT"])
 def process_data():
-  data = request.get_json()
-  dataValues = json.loads(data)
+  dataValues = request.get_json()
   try:
     jobHandler.download_data(dataValues["id"], dataValues["image"],
                              dataValues["output"], dataValues["trainPoly"],
@@ -178,18 +179,26 @@ def visualize_predictions():
     return {"MESSAGE": str(e)}
   return {"MESSAGE": "SUCCESS"}
 
-
-@app.route('/poll', methods=["PUT"])
-def poll_status():
+@app.route('/api/tasks', methods=["PUT"])
+def get_task_names():
   data = request.get_json()
-  dataValues = json.loads(data)
+  ans = dict()
+  ans["tasks"] = []
+  for task in jobHandler.jobs[data["id"]]["tasks"]:
+    ans["tasks"].append(task.status())
+  return ans
+
+@app.route('/api/poll')
+def poll_status():
 
   def stream(id):
-    while not jobHandler.jobs[id]["thread"].completed:
-      time.sleep(30)
-      return jobHandler.jobs[id]["status"]
-
-  return Response(stream(dataValues["id"]), mimetype="text/event-stream")
+    status = jobHandler.jobs[id]["status"]
+    while jobHandler.jobs[id]["thread"].completed:
+      status = jobHandler.jobs[id]["status"]
+      yield f"data: {status}\n\n"
+      time.sleep(10)
+    yield f"data: {status}\n\n"
+  return Response(stream("testJob"), mimetype="text/event-stream")
 
 
 @app.route('/api/map', methods=["PUT"])
