@@ -94,6 +94,7 @@ class Dashboard extends Component{
                     }
     console.log(request)
     axios.put("http://localhost:5000/api/map", request).then((res) => {
+      console.log(res)
       let map = [parameters["ic"] , <EarthEngineMap url= {res.data.url}></EarthEngineMap>]             
       this.setState({
         eeObjects: [...this.state.eeObjects, map]
